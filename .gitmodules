@@ -1,0 +1,3 @@
+[submodule "lib/stdVBA"]
+	path = lib/stdVBA
+	url = git://github.com/sancarn/stdVBA.git
