@@ -66,6 +66,8 @@ Private WithEvents pCommandButton  as MSForms.CommandButton
 Private pType as EUIElementType
 Private pID as String
 
+Private pLeft as Double
+Private pWidth as Double
 'Creating a input component from 
 Public Function CreateFromControl(ByVal parent as uiIMessagable, ByVal ctrl as Control) as uiElement
   set CreateFromControl = new uiElement
@@ -94,11 +96,11 @@ Public Function CreateFromType(ByVal parent As uiIMessagable, ByVal oControls As
   end select
   if sName <> "" then ctrl.name = sName
   if sCaption <> "" then ctrl.caption = sCaption
-  ctrl.Left = fLeft
-  ctrl.Top  = fTop
-  if fWidth <> 0  then ctrl.Width  = fWidth
-  if fHeight <> 0 then ctrl.Height = fHeight
   Call CreateFromType.protInit(parent,ctrl)
+  CreateFromType.Left = fLeft
+  CreateFromType.Top  = fTop
+  if fWidth <> 0  then CreateFromType.Width  = fWidth
+  if fHeight <> 0 then CreateFromType.Height = fHeight
 End Function
 
 'Obtain type of input control
@@ -142,16 +144,27 @@ Public Property Get Value() as Variant
   end select
 End Property
 Public Property Let Value(v as Variant)
-  uiObject.Value = v
+  select case pType
+    Case uiTextBox, uiComboBox, uiListBox, uiCheckBox, uiOptionButton, uiToggleButton, uiScrollBar, uiSpinButton
+      uiObject.value = v
+    Case uiLabel
+      uiObject.caption = v
+  end select
 End Property
 
 'Get/Set Position Left
 Public Property Get Left() as Double
-  Left = pControl.left
+  Left = pLeft
 End Property
 Public Property Let Left(fLeft as Double)
-  pControl.Left = fLeft
-  Call pParent.Message(Me, uiElementEventMove, pControl.Left, pControl.Top)
+  pLeft = fLeft
+  select case pType
+    case uiTextBox, uiComboBox, uiListBox, uiOptionButton, uiToggleButton, uiScrollBar, uiSpinButton, uiLabel
+      uiObject.left = pLeft
+    case uiCheckBox
+      uiObject.left = pLeft + iif(pWidth<=12,0,pWidth/2-6)
+  end select
+  Call pParent.Message(Me, uiElementEventMove, Array(pLeft, pControl.Top))
 End Property
 
 'Get/Set Position Top
@@ -160,16 +173,18 @@ Public Property Get Top() as Double
 End Property
 Public Property Let Top(fTop as Double)
   pControl.Top = fTop
-  Call pParent.Message(Me, uiElementEventMove, pControl.Left, pControl.Top)
+  Call pParent.Message(Me, uiElementEventMove, Array(pControl.Left, pControl.Top))
 End Property
 
 'Get/Set Size Width
 Public Property Get Width() as Double
-  Width = pControl.Width
+  Width = pWidth
 End Property
 Public Property Let Width(fWidth as Double)
-  pControl.Width = fWidth
-  Call pParent.Message(Me, uiElementEventResize, pControl.Width, pControl.Height)
+  pWidth = fWidth
+  Left = pLeft
+  uiObject.width = fWidth
+  Call pParent.Message(Me, uiElementEventResize, Array(pControl.Width, pControl.Height))
 End Property
 
 'Get/Set Size Height
@@ -178,7 +193,7 @@ Public Property Get Height() as Double
 End Property
 Public Property Let Height(fHeight as Double)
   pControl.Height = fHeight
-  Call pParent.Message(Me, uiElementEventResize, pControl.Width, pControl.Height)
+  Call pParent.Message(Me, uiElementEventResize, Array(pControl.Width, pControl.Height))
 End Property
 
 'Getter for id
@@ -300,35 +315,35 @@ Private Sub pToggleButton_Click():  Call pParent.Message(Me, EUIElementMessage.u
 Private Sub pCommandButton_Click(): Call pParent.Message(Me, EUIElementMessage.uiElementEventMouseClick ) : End Sub
 Private Sub pMultiPage_Click(ByVal index As Long)
   Call pParent.Message(Me, EUIElementMessage.uiElementEventMouseClick)
-  Call pParent.Message(Me, EUIElementMessage.uiElementEventTabSelected, index)
+  Call pParent.Message(Me, EUIElementMessage.uiElementEventTabSelected, Array(index))
 End Sub
 Private Sub pTabStrip_Click(ByVal Index As Long)
   Call pParent.Message(Me, EUIElementMessage.uiElementEventMouseClick )
-  Call pParent.Message(Me, EUIElementMessage.uiElementEventTabSelected, index)
+  Call pParent.Message(Me, EUIElementMessage.uiElementEventTabSelected, Array(index))
 End Sub
 Private Sub pImage_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
-  Call pParent.Message(Me, EUIElementMessage.uiElementEventMouseClick, X, Y)
+  Call pParent.Message(Me, EUIElementMessage.uiElementEventMouseClick, Array(X, Y))
 End Sub
 Private Sub pTextBox_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
-  Call pParent.Message(Me, EUIElementMessage.uiElementEventMouseClick, X, Y)
+  Call pParent.Message(Me, EUIElementMessage.uiElementEventMouseClick, Array(X, Y))
 End Sub
 
 'Parent object events
-Private Sub pUserForm_AddControl(ByVal Control As MSForms.Control): Call pParent.Message(Me, EUIElementMessage.uiElementEventAddChild, control, 0) : End Sub
-Private Sub pFrame_AddControl(ByVal Control As MSForms.Control): Call pParent.Message(Me, EUIElementMessage.uiElementEventAddChild, control, 0) : End Sub
-Private Sub pMultiPage_AddControl(ByVal Index As Long, ByVal Control As MSForms.Control): Call pParent.Message(Me, EUIElementMessage.uiElementEventAddChild, Control, Index) : End Sub
+Private Sub pUserForm_AddControl(ByVal Control As MSForms.Control): Call pParent.Message(Me, EUIElementMessage.uiElementEventAddChild, Array(control, 0)) : End Sub
+Private Sub pFrame_AddControl(ByVal Control As MSForms.Control): Call pParent.Message(Me, EUIElementMessage.uiElementEventAddChild, Array(control, 0)) : End Sub
+Private Sub pMultiPage_AddControl(ByVal Index As Long, ByVal Control As MSForms.Control): Call pParent.Message(Me, EUIElementMessage.uiElementEventAddChild, Array(Control, Index)) : End Sub
 
 
 'Change events
-Private Sub pMultiPage_Change():    Call pParent.Message(Me, EUIElementMessage.uiElementEventChange, uiObject.value)  : End Sub
-Private Sub pTabStrip_Change():     Call pParent.Message(Me, EUIElementMessage.uiElementEventChange, uiObject.value)  : End Sub
-Private Sub pCheckBox_Change():     Call pParent.Message(Me, EUIElementMessage.uiElementEventChange, uiObject.value ) : End Sub
-Private Sub pComboBox_Change():     Call pParent.Message(Me, EUIElementMessage.uiElementEventChange, uiObject.value ) : End Sub
-Private Sub pListBox_Change():      Call pParent.Message(Me, EUIElementMessage.uiElementEventChange, uiObject.value ) : End Sub
-Private Sub pOptionButton_Change(): Call pParent.Message(Me, EUIElementMessage.uiElementEventChange, uiObject.value ) : End Sub
-Private Sub pScrollBar_Change():    Call pParent.Message(Me, EUIElementMessage.uiElementEventChange, uiObject.value ) : End Sub
-Private Sub pSpinButton_Change():   Call pParent.Message(Me, EUIElementMessage.uiElementEventChange, uiObject.value ) : End Sub
-Private Sub pTextBox_Change():      Call pParent.Message(Me, EUIElementMessage.uiElementEventChange, uiObject.value ) : End Sub
-Private Sub pToggleButton_Change(): Call pParent.Message(Me, EUIElementMessage.uiElementEventChange, uiObject.value ) : End Sub
+Private Sub pMultiPage_Change():    Call pParent.Message(Me, EUIElementMessage.uiElementEventChange, Array(uiObject.value))  : End Sub
+Private Sub pTabStrip_Change():     Call pParent.Message(Me, EUIElementMessage.uiElementEventChange, Array(uiObject.value))  : End Sub
+Private Sub pCheckBox_Change():     Call pParent.Message(Me, EUIElementMessage.uiElementEventChange, Array(uiObject.value)) : End Sub
+Private Sub pComboBox_Change():     Call pParent.Message(Me, EUIElementMessage.uiElementEventChange, Array(uiObject.value)) : End Sub
+Private Sub pListBox_Change():      Call pParent.Message(Me, EUIElementMessage.uiElementEventChange, Array(uiObject.value)) : End Sub
+Private Sub pOptionButton_Change(): Call pParent.Message(Me, EUIElementMessage.uiElementEventChange, Array(uiObject.value)) : End Sub
+Private Sub pScrollBar_Change():    Call pParent.Message(Me, EUIElementMessage.uiElementEventChange, Array(uiObject.value)) : End Sub
+Private Sub pSpinButton_Change():   Call pParent.Message(Me, EUIElementMessage.uiElementEventChange, Array(uiObject.value)) : End Sub
+Private Sub pTextBox_Change():      Call pParent.Message(Me, EUIElementMessage.uiElementEventChange, Array(uiObject.value)) : End Sub
+Private Sub pToggleButton_Change(): Call pParent.Message(Me, EUIElementMessage.uiElementEventChange, Array(uiObject.value)) : End Sub
 
 'MouseMove events

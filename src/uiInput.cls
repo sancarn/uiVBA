@@ -92,7 +92,7 @@ Public Property Get Left() as Double
 End Property
 Public Property Let Left(fLeft as Double)
   pControl.Left = fLeft
-  Call pParent.Message(Me, uiInputEventMove, pControl.Left, pControl.Top)
+  Call pParent.Message(Me, uiInputEventMove, Array(pControl.Left, pControl.Top))
 End Property
 
 'Get/Set Position Top
@@ -101,7 +101,7 @@ Public Property Get Top() as Double
 End Property
 Public Property Let Top(fTop as Double)
   pControl.Top = fTop
-  Call pParent.Message(Me, uiInputEventMove, pControl.Left, pControl.Top)
+  Call pParent.Message(Me, uiInputEventMove, Array(pControl.Left, pControl.Top))
 End Property
 
 'Get/Set Size Width
@@ -110,7 +110,7 @@ Public Property Get Width() as Double
 End Property
 Public Property Let Width(fWidth as Double)
   pControl.Width = fWidth
-  Call pParent.Message(Me, uiInputEventResize, pControl.Width, pControl.Height)
+  Call pParent.Message(Me, uiInputEventResize, Array(pControl.Width, pControl.Height))
 End Property
 
 'Get/Set Size Height
@@ -119,7 +119,7 @@ Public Property Get Height() as Double
 End Property
 Public Property Let Height(fHeight as Double)
   pControl.Height = fHeight
-  Call pParent.Message(Me, uiInputEventResize, pControl.Width, pControl.Height)
+  Call pParent.Message(Me, uiInputEventResize, Array(pControl.Width, pControl.Height))
 End Property
 
 'Getter for id
@@ -189,11 +189,11 @@ Private Function getGUID() As String
   Next
 End Function
 
-Private Sub pCheckBox_Change():     Call pParent.Message(Me, EUIInputMessage.uiInputEventChange, uiObject.value ) : End Sub
-Private Sub pComboBox_Change():     Call pParent.Message(Me, EUIInputMessage.uiInputEventChange, uiObject.value ) : End Sub
-Private Sub pListBox_Change():      Call pParent.Message(Me, EUIInputMessage.uiInputEventChange, uiObject.value ) : End Sub
-Private Sub pOptionButton_Change(): Call pParent.Message(Me, EUIInputMessage.uiInputEventChange, uiObject.value ) : End Sub
-Private Sub pScrollBar_Change():    Call pParent.Message(Me, EUIInputMessage.uiInputEventChange, uiObject.value ) : End Sub
-Private Sub pSpinButton_Change():   Call pParent.Message(Me, EUIInputMessage.uiInputEventChange, uiObject.value ) : End Sub
-Private Sub pTextBox_Change():      Call pParent.Message(Me, EUIInputMessage.uiInputEventChange, uiObject.value ) : End Sub
-Private Sub pToggleButton_Change(): Call pParent.Message(Me, EUIInputMessage.uiInputEventChange, uiObject.value ) : End Sub
+Private Sub pCheckBox_Change():     Call pParent.Message(Me, EUIInputMessage.uiInputEventChange, Array(uiObject.value) ) : End Sub
+Private Sub pComboBox_Change():     Call pParent.Message(Me, EUIInputMessage.uiInputEventChange, Array(uiObject.value) ) : End Sub
+Private Sub pListBox_Change():      Call pParent.Message(Me, EUIInputMessage.uiInputEventChange, Array(uiObject.value) ) : End Sub
+Private Sub pOptionButton_Change(): Call pParent.Message(Me, EUIInputMessage.uiInputEventChange, Array(uiObject.value) ) : End Sub
+Private Sub pScrollBar_Change():    Call pParent.Message(Me, EUIInputMessage.uiInputEventChange, Array(uiObject.value) ) : End Sub
+Private Sub pSpinButton_Change():   Call pParent.Message(Me, EUIInputMessage.uiInputEventChange, Array(uiObject.value) ) : End Sub
+Private Sub pTextBox_Change():      Call pParent.Message(Me, EUIInputMessage.uiInputEventChange, Array(uiObject.value) ) : End Sub
+Private Sub pToggleButton_Change(): Call pParent.Message(Me, EUIInputMessage.uiInputEventChange, Array(uiObject.value) ) : End Sub

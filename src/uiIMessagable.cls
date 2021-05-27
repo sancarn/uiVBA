@@ -8,6 +8,6 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = false
 Attribute VB_Exposed = False
 
-Function Message(ByVal Caller as Object, iMessage as Long, ParamArray params() as Variant) as Variant
+Function Message(ByVal Caller as Object, iMessage as Long, Optional params as Variant = Empty) as Variant
 
 End Function

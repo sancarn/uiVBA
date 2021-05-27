@@ -8,6 +8,8 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
+Implements uiIMessagable
+
 'Events to encode and decode a column value. E.G.
 '@example
 'Value in dataset = "yes"
@@ -22,13 +24,14 @@ Private pLeft as Double
 Private pWidth as Double
 Private pCells as new Collection 'Collection<uiElement>
 
-Public Function Create(ByVal sHeaderName as string, ByVal iType as EUIElementType) as uiTableColumnInfo
+Public Function Create(ByVal sHeaderName as string, ByVal iType as EUIElementType, Optional ByVal fWidth as double = 100) as uiTableColumnInfo
   set Create = new uiTableColumnInfo
-  Call Create.protInit(sHeaderName, iType)
+  Call Create.protInit(sHeaderName, iType, fWidth)
 End Function
-Public Sub protInit(ByVal sHeaderName as string, ByVal iType as EUIElementType)
+Public Sub protInit(ByVal sHeaderName as string, ByVal iType as EUIElementType, ByVal fWidth as double)
   pName = sHeaderName
   pType = iType
+  pWidth = fWidth
 End Sub
 
 'Get/Let name
@@ -80,7 +83,7 @@ End Property
 Public Property Get ElementData(ByRef element as uiElement) as variant
   Dim v: v = element.value
   RaiseEvent EncodeControlValue(v)
-  GetElementData = v
+  ElementData = v
 End Property
 Public Property Let ElementData(ByRef element as uiElement, ByVal v as Variant)
   RaiseEvent DecodeControlValue(v)
@@ -92,7 +95,6 @@ Public Property Get Cells() as Collection
   set Cells = pCells
 End Property
 
-Public Function Bind(ByRef eventBinder as uiTableColumnInfo) as uiTableColumnInfo
-  set eventBinder = me
-  set Bind = me
+Private Function uiIMessagable_Message(ByVal Caller as Object, iMessage as Long, Optional params as Variant = Empty) as Variant
+  
 End Function
