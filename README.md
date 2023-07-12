@@ -57,3 +57,7 @@ function Video({ video }) {
 }
 ```
 
+For some UI like:
+
+![image](https://github.com/sancarn/uiVBA/assets/7938900/35467013-b21d-4148-a4f2-09fb4fcc5890)
+
