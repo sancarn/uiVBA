@@ -2,6 +2,10 @@
 
 A [`stdVBA`](https://github.com/sancarn/stdVBA) project to build a [`react`](https://react.dev/)-like set of UI components for VBA.
 
+## Current state
+
+Very incomplete and doesn't adhere to vision very well.
+
 ## Vision
 
 ```vb
